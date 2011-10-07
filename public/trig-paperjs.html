@@ -62,7 +62,7 @@
                 for (var i = 0; i < sineWaveLength/sineWaveStep; ++i) {
                     sineWave.add(circleCenterPt.add([
                         i * sineWaveStep,
-                        -Math.sin((angle + i) / 180 * Math.PI) * circleRadius
+                        Math.sin((angle + i) / 180 * Math.PI) * circleRadius
                     ]));
                 }
                 var sineWaveMarker = new paper.Path.Line();
