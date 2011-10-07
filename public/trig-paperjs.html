@@ -5,7 +5,6 @@
             body {
                 margin: 0;
                 padding: 0;
-                overflow: hidden;
             }
         </style>
         <script src="jq.js"></script>
@@ -13,9 +12,9 @@
         <script src="requestanimframe.js"></script>
         <script>
             jQuery(function($) {
-                var circleCenterPt = new paper.Point(200, 300);
+                var circleCenterPt = new paper.Point(150, 300);
                 var circleRadius = 75;
-                var sineWaveLength = 400;
+                var sineWaveLength = 300;
                 var cosineWaveLength = 300;
 
                 paper.setup($('canvas')[0]);
@@ -119,6 +118,7 @@
         </script>
     </head>
     <body>
-        <canvas resize>
+        <canvas width="450" height="450" style="border: 1px solid gray"></canvas>
+        <script src="https://gist.github.com/1269763.js?file=gistfile1.js"></script>
     </body>
 </html>
