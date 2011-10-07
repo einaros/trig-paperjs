@@ -86,7 +86,7 @@
                     // Update marker position on the circle
                     var a = (angle++) / 180 * Math.PI;
                     marker.position.x = circleCenterPt.x + Math.cos(a) * circleRadius;
-                    marker.position.y = circleCenterPt.y + Math.sin(a) * circleRadius;
+                    marker.position.y = circleCenterPt.y - Math.sin(a) * circleRadius;
 
                     // Update degree and (rounded) radian angle text
                     angleDegText.content = (angle % 360) + '°';
