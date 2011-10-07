@@ -1,0 +1,124 @@
+<!DOCTYPE html> 
+<html>
+    <head>
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+            }
+        </style>
+        <script src="jq.js"></script>
+        <script src="paper.js"></script>
+        <script src="requestanimframe.js"></script>
+        <script>
+            jQuery(function($) {
+                var circleCenterPt = new paper.Point(200, 300);
+                var circleRadius = 75;
+                var sineWaveLength = 400;
+                var cosineWaveLength = 300;
+
+                paper.setup($('canvas')[0]);
+                var sineWaveStep = sineWaveLength/360;
+                var cosineWaveStep = cosineWaveLength/360;
+                var angle = 0;
+                
+                var circle = new paper.Path.Circle(circleCenterPt, circleRadius);
+                circle.strokeColor = 'blue';
+
+                // Add x-axis
+                var xAxis = new paper.Path.Line(
+                    new paper.Point(0, circleCenterPt.y),
+                    new paper.Point(circleCenterPt.x + sineWaveLength, circleCenterPt.y));
+                xAxis.strokeColor = 'gray';
+                var xAxisText = new paper.PointText(circleCenterPt.add([sineWaveLength - 100, 20]));
+                xAxisText.fillColor = 'gray';
+                xAxisText.content = 'sine wave';
+
+                // Add y-axis
+                var yAxis = new paper.Path.Line(
+                    new paper.Point(circleCenterPt.x, 0),
+                    new paper.Point(circleCenterPt.x, cosineWaveLength + circleCenterPt.x));
+                yAxis.strokeColor = 'gray';
+                var yAxisText = new paper.PointText(new paper.Point(circleCenterPt.x + 10, 20));
+                yAxisText.fillColor = 'gray';
+                yAxisText.content = 'cosine wave';
+                
+                // Add circle angle marker
+                var marker = new paper.Path.Circle(new paper.Point(10, 10), 5);
+                marker.strokeColor = 'blue';
+                marker.fillColor = 'white';
+
+                // Add angle text
+                var angleDegText = new paper.PointText(circleCenterPt.add([circleRadius, circleRadius]));
+                angleDegText.fillColor = 'gray';
+                angleDegText.content = '';
+                var angleRadText = new paper.PointText(angleDegText.position.add([0, 20]));
+                angleRadText.fillColor = 'gray';
+                angleRadText.content = '';
+                
+                // Add sine path, which maps to the y-axis
+                var sineWave = new paper.Path();
+                sineWave.strokeColor = 'green';
+                for (var i = 0; i < sineWaveLength/sineWaveStep; ++i) {
+                    sineWave.add(circleCenterPt.add([
+                        i * sineWaveStep,
+                        -Math.sin((angle + i) / 180 * Math.PI) * circleRadius
+                    ]));
+                }
+                var sineWaveMarker = new paper.Path.Line();
+                sineWaveMarker.strokeColor = 'black';
+                sineWaveMarker.dashArray = [2, 2];
+                
+                // Add a cosine path, which maps to the x-axis
+                var cosineWave = new paper.Path();
+                cosineWave.strokeColor = 'green';
+                for (var i = 0; i < cosineWaveLength/cosineWaveStep; ++i) {
+                    cosineWave.add(circleCenterPt.add([
+                        Math.cos((angle + i) / 180 * Math.PI) * circleRadius,
+                        -i * cosineWaveStep
+                    ]));
+                }
+                var cosineWaveMarker = new paper.Path.Line();
+                cosineWaveMarker.strokeColor = 'black';
+                cosineWaveMarker.dashArray = [2, 2];
+
+                function animate() {
+                    // Update marker position on the circle
+                    var a = (angle++) / 180 * Math.PI;
+                    marker.position.x = circleCenterPt.x + Math.cos(a) * circleRadius;
+                    marker.position.y = circleCenterPt.y + Math.sin(a) * circleRadius;
+
+                    // Update degree and (rounded) radian angle text
+                    angleDegText.content = (angle % 360) + '°';
+                    angleRadText.content = Math.round((a % (Math.PI*2)) * 1000)/1000 + ' rad';
+                    
+                    // Update sine wave points, essentially just moving them one step back
+                    // then add a fresh point to the current angle
+                    for (var i = sineWave.segments.length - 1; i > 0; --i) {
+                        sineWave.segments[i].point.y = sineWave.segments[i - 1].point.y;
+                    }
+                    sineWave.segments[0].point.y = marker.position.y;
+                    sineWaveMarker.segments[0].point = marker.position.clone();
+                    sineWaveMarker.segments[1].point = sineWave.segments[0].point.clone();
+
+                    // Same as above, but for the cosine points
+                    for (var i = cosineWave.segments.length - 1; i > 0; --i) {
+                        cosineWave.segments[i].point.x = cosineWave.segments[i - 1].point.x;
+                    }
+                    cosineWave.segments[0].point.x = marker.position.x;
+                    cosineWaveMarker.segments[0].point = marker.position.clone();
+                    cosineWaveMarker.segments[1].point = cosineWave.segments[0].point.clone();
+                    
+                    // Redraw!
+                    paper.view.draw();
+                    requestAnimFrame(animate);
+                }
+                animate();
+            });
+        </script>
+    </head>
+    <body>
+        <canvas resize>
+    </body>
+</html>
